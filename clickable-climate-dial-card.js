@@ -172,7 +172,7 @@ class ClimatisationMoletteCard extends HTMLElement {
           background: var(--primary-text-color, #fff);
           transform: scale(1.3);
         }
-        /* glossy sphere badge — same recipe as the Intensité / kVA icons */
+        /* glossy sphere badge, same recipe as the Intensité / kVA icons */
         .icon-badge {
           position: relative;
           overflow: hidden;
@@ -220,7 +220,7 @@ class ClimatisationMoletteCard extends HTMLElement {
         .icon-badge ha-icon.anim-pulse {
           animation: iconPulse 1.7s ease-in-out infinite;
         }
-        /* invites a tap when the clim is off — a soft neutral ring pulsing outward,
+        /* invites a tap when the clim is off: a soft neutral ring pulsing outward,
            distinct from the colored glow used for active modes */
         .icon-badge.tap-on {
           cursor: pointer;
@@ -248,9 +248,9 @@ class ClimatisationMoletteCard extends HTMLElement {
   }
 
   // tapping the icon while showing Température and the clim is off turns it back
-  // on — the main screen's icon becomes a quick "power on" shortcut instead of
+  // on: the main screen's icon becomes a quick "power on" shortcut instead of
   // doing nothing. This integration treats "off" as a real power state: calling
-  // set_hvac_mode alone while off does NOT switch the unit on (verified live —
+  // set_hvac_mode alone while off does NOT switch the unit on (verified live,
   // the state stayed "off"), only climate.turn_on does, and the device then
   // resumes whatever hvac mode it was last running in on its own.
   _onIconBadgeTap() {
@@ -259,7 +259,7 @@ class ClimatisationMoletteCard extends HTMLElement {
     if (!fn || fn.key !== 'temp') return;
     const st = this._hass.states[this._config.entity];
     const curMode = st && st.state;
-    if (curMode && curMode !== 'off') return; // already on — icon tap is a no-op
+    if (curMode && curMode !== 'off') return; // already on, icon tap is a no-op
     this._hass.callService('climate', 'turn_on', {
       entity_id: this._config.entity
     });
@@ -309,7 +309,7 @@ class ClimatisationMoletteCard extends HTMLElement {
     const valClock = this._valueToClockDeg(fn, value);
 
     // mode-driven color for the temperature digits/icon: red-orange when
-    // heating, blue when cooling — intensity scales with how extreme the set-point is.
+    // heating, blue when cooling; intensity scales with how extreme the set-point is.
     // The ring/handle/label follow the same hue (paler tone -> saturated tone) so the
     // whole dial reads as one coherent color, not just the digits.
     let tempColor = null;
@@ -327,7 +327,7 @@ class ClimatisationMoletteCard extends HTMLElement {
       effColorFrom = grad.from;
       effColorTo = grad.to;
       if (isOffMode) {
-        // clim éteinte — l'anneau ne doit surtout pas ressembler à un mode actif :
+        // clim éteinte : l'anneau ne doit surtout pas ressembler à un mode actif,
         // couleur neutre grise (pas jaune/orange, pas une teinte de mode) + intensité
         // réduite (pas de glow, opacité basse) pour qu'il n'y ait aucune équivoque
         progOpacity = 0.35;
@@ -391,13 +391,13 @@ class ClimatisationMoletteCard extends HTMLElement {
       });
     }
 
-    // progress arc (glossy, glowing) from start to current value — dimmed to a flat,
+    // progress arc (glossy, glowing) from start to current value, dimmed to a flat,
     // glow-less arc when the clim is off so it can't be mistaken for an active mode
     if (useProgGlow) svg += `<g filter="url(#glow)">`;
     svg += this._ringPath(cx, cy, rOuter, start, (valClock - start + 360) % 360 || 0.001, 'url(#prog)', 10, progOpacity, true);
     if (useProgGlow) svg += `</g>`;
 
-    // static top gloss reflection — mirror-like sheen across the top of the ring,
+    // static top gloss reflection: mirror-like sheen across the top of the ring,
     // independent of the current value, like light reflecting off glass/chrome
     svg += this._ringPath(cx, cy, rOuter, -32, 64, 'url(#topGloss)', 5, 0.9, true);
 
@@ -420,7 +420,7 @@ class ClimatisationMoletteCard extends HTMLElement {
         svg += `<text class="zone-label" x="${p.x.toFixed(1)}" y="${p.y.toFixed(1)}" text-anchor="middle" dominant-baseline="middle" fill="${color}">${lbl}</text>`;
       });
     } else {
-      // min/mid/max labels for continuous (temperature) — the mid label sits
+      // min/mid/max labels for continuous (temperature): the mid label sits
       // right under the icon badge, made brighter/bigger so it's readable at a glance
       [0, 0.5, 1].forEach((f) => {
         const d = start + sweep * f;
@@ -433,12 +433,12 @@ class ClimatisationMoletteCard extends HTMLElement {
       });
     }
 
-    // draggable handle knob — glossy chrome ball (base + specular highlight)
+    // draggable handle knob: glossy chrome ball (base + specular highlight)
     const hp = ClimatisationMoletteCard._pointFor(cx, cy, rHandle, valClock);
     svg += `<circle cx="${hp.x.toFixed(1)}" cy="${hp.y.toFixed(1)}" r="11" fill="url(#centerGrad)" stroke="${effColorTo}" stroke-width="3" filter="url(#softshadow)"/>`;
     svg += `<ellipse cx="${(hp.x - 3).toFixed(1)}" cy="${(hp.y - 3.5).toFixed(1)}" rx="5" ry="3.2" fill="url(#handleSheen)" opacity="0.9"/>`;
 
-    // center circle — glossy dark dome
+    // center circle: glossy dark dome
     svg += `<circle cx="${cx}" cy="${cy}" r="${rCenter}" fill="url(#centerGrad)" filter="url(#softshadow)"/>`;
     svg += `<g clip-path="url(#centerClip)"><ellipse cx="${cx}" cy="${(cy - 32).toFixed(1)}" rx="48" ry="26" fill="url(#centerSheen)"/></g>`;
     svg += `<circle cx="${cx}" cy="${cy}" r="${rCenter}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>`;
@@ -457,7 +457,7 @@ class ClimatisationMoletteCard extends HTMLElement {
 
     this._svg.innerHTML = svg;
 
-    // icon badge — dark glossy sphere, colored + glowing icon (same language as
+    // icon badge: dark glossy sphere, colored + glowing icon (same language as
     // the Intensité / kVA badges elsewhere on the dashboard), animated to feel alive:
     // the fan spins (faster at higher speed), the thermometer breathes hot/cold
     if (this._iconBadge && this._iconEl) {
@@ -483,7 +483,7 @@ class ClimatisationMoletteCard extends HTMLElement {
       this._iconEl.setAttribute('icon', iconName);
       this._iconEl.style.color = iconColor;
       this._iconEl.style.filter = `drop-shadow(0 0 4px ${iconColor}) drop-shadow(0 1px 1px rgba(0,0,0,.6))`;
-      // avoid toggling a class that's already set — that restarts the animation
+      // avoid toggling a class that's already set: that restarts the animation
       // (e.g. the fan snapping back to 0deg) on every re-render while dragging
       if (anim === 'spin') {
         this._iconEl.classList.remove('anim-pulse');
@@ -546,7 +546,7 @@ class ClimatisationMoletteCard extends HTMLElement {
     return `rgb(${r},${g},${b})`;
   }
 
-  // ring / handle / label gradient for the temperature dial — same hue family as
+  // ring / handle / label gradient for the temperature dial: same hue family as
   // _tempTextColor (pale -> saturated) so the whole molette matches the current
   // hvac mode instead of always showing the old fixed yellow->orange gradient
   _tempModeGradient(mode) {

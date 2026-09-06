@@ -5,7 +5,11 @@ tactile pour piloter un thermostat (`climate.*`), avec un rendu glossy/dark
 sur mesure (anneau lumineux, badge d'icône animé, dégradés de couleur selon
 le mode).
 
-![Aperçu](docs/preview.png)
+Un tap au centre fait défiler 3 écrans sur la même molette :
+
+| Température | Vitesse | Mode |
+| --- | --- | --- |
+| ![Écran Température](docs/preview.png) | ![Écran Vitesse](docs/preview-vitesse.png) | ![Écran Mode](docs/preview-mode.png) |
 
 ## Fonctionnalités
 
@@ -52,7 +56,7 @@ entity: climate.salon
 - Le mode ventilation (`fan_mode`) est traité comme une valeur numérique de
   1 à 5 (adapté au clim de l'auteur). Si votre appareil expose des
   `fan_mode` textuels (`low`/`medium`/`high`...) ou une autre plage, cette
-  fonction ne s'affichera pas correctement — contributions bienvenues.
+  fonction ne s'affichera pas correctement : contributions bienvenues.
 - La liste des modes HVAC affichés (`off`, `dry`, `fan_only`, `cool`,
   `heat`, `heat_cool`) est fixe plutôt que lue dynamiquement depuis
   `hvac_modes` de l'entité.
