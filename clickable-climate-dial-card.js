@@ -621,13 +621,20 @@ class ClimatisationMoletteCard extends HTMLElement {
     };
 
     const onDown = (evt) => {
-      evt.preventDefault();
-      // any interaction cancels a pending auto-revert
-      if (this._revertTimer) { clearTimeout(this._revertTimer); this._revertTimer = null; }
       const p = getLocalPoint(evt);
       const cx = 150, cy = 150;
       const dist = Math.hypot(p.x - cx, p.y - cy);
-      downInfo = { x: p.x, y: p.y, t: Date.now(), moved: false, insideCenter: dist < 66 };
+      const insideCenter = dist < 66;
+      // interactive band = center dome + ring/handle/ticks (up to ~132). Beyond
+      // that (the SVG's square corners, and the padding around the visible
+      // circle) is dead space: a finger merely grazing the tile edge on its way
+      // to something lower on the dashboard must NOT be hijacked as a rotation.
+      const nearRing = dist >= 66 && dist <= 132;
+      if (!insideCenter && !nearRing) { downInfo = null; return; }
+      evt.preventDefault();
+      // any interaction cancels a pending auto-revert
+      if (this._revertTimer) { clearTimeout(this._revertTimer); this._revertTimer = null; }
+      downInfo = { x: p.x, y: p.y, t: Date.now(), moved: false, insideCenter };
       try { svg.setPointerCapture(evt.pointerId); } catch (e) {}
     };
 
